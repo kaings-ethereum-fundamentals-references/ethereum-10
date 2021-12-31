@@ -1,0 +1,50 @@
+// run `truffle develop` to test the contract locally, then run `migrate` or `migrate --reset` to compile & deploy the contract
+truffle(develop)> var myToken2 = await MyTokenV2.deployed()
+undefined
+
+truffle(develop)> var symbol = await myToken2.symbol()
+undefined
+
+truffle(develop)> symbol
+'MTKV2'
+
+truffle(develop)> var name = await myToken2.name()
+undefined
+
+truffle(develop)> name
+'mytokenv2'
+
+truffle(develop)> var maxCap = await myToken2.cap()
+undefined
+
+truffle(develop)> maxCap
+BN {
+  negative: 0,
+  words: [ 100000, <1 empty item> ],
+  length: 1,
+  red: null
+}
+
+truffle(develop)> maxCap.toNumber()
+100000
+
+
+// to test we CANNOT change the token max cap if we do not have sufficient role
+// only the address that deploys the contract accounts[0] has the role so far
+truffle(develop)> var change1 = await myToken2.setCap(200000, {from: accounts[1]})
+Thrown:
+Error: Returned error: VM Exception while processing transaction: revert ERC20PresetMinterPauser: 
+must have cap role to set cap -- Reason given: ERC20PresetMinterPauser: must have cap role to set cap.
+...
+
+
+// now we use the correct account with the correct role to change the cap (accounts[0])
+truffle(develop)> var change1 = await myToken2.setCap(200000, {from: accounts[0]})
+undefined
+
+truffle(develop)> var maxCap = await myToken2.cap()
+undefined
+
+truffle(develop)> maxCap.toNumber()
+200000
+
